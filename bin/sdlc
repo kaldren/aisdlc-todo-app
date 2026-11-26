@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""AI-SDLC CLI.
+
+Agents may use:  status, check, new, lines
+Humans only:     approve, changes, stop   (blocked for agents by hooks + settings)
+Git hook:        verify-merge
+"""
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import sdlc_core as core  # noqa: E402
+
+
+def cmd_status(args):
+    fid = args.id or core.current_id()
+    if not fid:
+        print("none  no feature in flight; start one with /feature \"<problem>\"")
+        return 0
+    fdir = core.resolve(fid)
+    st, detail = core.stage(fdir.name)
+    print(f"{fdir.name}  {st}  {detail}")
+    marks = "  ".join(f"{g}:{'✔' if core.valid(fdir.name, g) else '·'}" for g in core.GATES)
+    print(f"  gates  {marks}")
+    return 0
+
+
+def cmd_check(args):
+    fdir = core.resolve(args.id)
+    if core.valid(fdir.name, args.gate):
+        print(f"ok: {fdir.name} {args.gate} approved")
+        return 0
+    print(f"NOT APPROVED: {fdir.name} {args.gate}", file=sys.stderr)
+    return 1
+
+
+def cmd_new(args):
+    print(core.new(args.slug))
+    return 0
+
+
+def cmd_decide(args, decision):
+    e = core.record(args.id, args.gate, decision, getattr(args, "notes", "") or "", via="cli")
+    extra = f" sha256={e['sha256'][:12]}" if decision == "approve" else ""
+    print(f"recorded: {args.gate} {decision} by {e['by']}{extra}")
+    return 0
+
+
+def cmd_lines(_args):
+    bad = core.long_md_files()
+    for path, n in bad:
+        print(f"{path}: {n} lines (max {core.MAX_LINES})", file=sys.stderr)
+    if not bad:
+        print(f"ok: every .md file is ≤ {core.MAX_LINES} lines")
+    return 1 if bad else 0
+
+
+def cmd_verify_merge(_args):
+    core.verify_merge()
+    return 0
+
+
+def main():
+    p = argparse.ArgumentParser(prog="sdlc")
+    sub = p.add_subparsers(dest="cmd", required=True)
+    s = sub.add_parser("status"); s.add_argument("id", nargs="?")
+    s.set_defaults(fn=cmd_status)
+    s = sub.add_parser("check"); s.add_argument("id"); s.add_argument("gate")
+    s.set_defaults(fn=cmd_check)
+    s = sub.add_parser("new"); s.add_argument("slug"); s.set_defaults(fn=cmd_new)
+    s = sub.add_parser("approve"); s.add_argument("id"); s.add_argument("gate")
+    s.set_defaults(fn=lambda a: cmd_decide(a, "approve"))
+    s = sub.add_parser("changes"); s.add_argument("id"); s.add_argument("gate")
+    s.add_argument("notes"); s.set_defaults(fn=lambda a: cmd_decide(a, "changes"))
+    s = sub.add_parser("stop"); s.add_argument("id"); s.add_argument("gate")
+    s.set_defaults(fn=lambda a: cmd_decide(a, "stop"))
+    sub.add_parser("lines").set_defaults(fn=cmd_lines)
+    sub.add_parser("verify-merge").set_defaults(fn=cmd_verify_merge)
+    args = p.parse_args()
+    try:
+        return args.fn(args)
+    except core.SdlcError as err:
+        print(f"sdlc: {err}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

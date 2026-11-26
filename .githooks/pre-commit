@@ -1,0 +1,4 @@
+#!/bin/sh
+# If this commit concludes a merge (e.g. after pre-merge-commit refused it),
+# apply the same merge-gate check. Ordinary commits pass straight through.
+SDLC_HOOK=pre-commit exec python3 "$(git rev-parse --show-toplevel)/bin/sdlc" verify-merge

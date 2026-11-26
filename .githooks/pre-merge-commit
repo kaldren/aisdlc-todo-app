@@ -1,0 +1,4 @@
+#!/bin/sh
+# Refuse merge commits into main unless the feature's merge gate was approved
+# and nothing but approval records changed on the branch since.
+exec python3 "$(git rev-parse --show-toplevel)/bin/sdlc" verify-merge

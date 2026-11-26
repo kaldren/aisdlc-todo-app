@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -58,6 +58,20 @@ def create_app() -> FastAPI:
                 return templates.TemplateResponse(
                     request, "index.html", {"tasks": tasks, "error": error}, status_code=422)
             db.add_task(conn, text)
+            return list_response(request, conn)
+
+    @app.post("/tasks/{task_id}/done")
+    def done_task(request: Request, task_id: int):
+        with db.connect(db_path) as conn:
+            if not db.mark_done(conn, task_id):
+                raise HTTPException(status_code=404, detail="Task not found")
+            return list_response(request, conn)
+
+    @app.post("/tasks/{task_id}/delete")
+    def delete_task(request: Request, task_id: int):
+        with db.connect(db_path) as conn:
+            if not db.delete_task(conn, task_id):
+                raise HTTPException(status_code=404, detail="Task not found")
             return list_response(request, conn)
 
     return app

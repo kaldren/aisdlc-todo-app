@@ -10,3 +10,4 @@ button { min-height: 44px; min-width: 44px; padding: 0.5rem 0.75rem; font-size: 
   border-bottom: 1px solid #ddd; }
 #task-list .text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 #task-list .empty { color: #666; }
+#task-list li.done .text { text-decoration: line-through; color: #777; }

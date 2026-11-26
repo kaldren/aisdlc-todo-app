@@ -13,8 +13,8 @@ def test_empty_page_has_form_and_hint(client):
     r = client.get("/")
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("text/html")
-    assert '<form class="add" method="post" action="/tasks">' in r.text
-    assert 'name="text"' in r.text
+    assert re.search(r'<form class="add" method="post" action="/tasks"', r.text)
+    assert re.search(r'<input [^>]*name="text"[^>]*required[^>]*maxlength="200"', r.text)
     assert "No tasks yet" in r.text
 
 
@@ -33,3 +33,14 @@ def test_actions_are_buttons_in_forms(client):
         form = by_action[action]
         assert 'method="post"' in form
         assert re.search(rf"<button\b[^>]*>{label}</button>", form)
+        assert f'hx-post="{action}"' in form
+        assert 'hx-target="#task-list"' in form and 'hx-swap="outerHTML"' in form
+
+
+def test_htmx_vendored(client):
+    html = client.get("/").text
+    assert '<script src="/static/htmx.min.js" defer></script>' in html
+    assert "unpkg" not in html and "cdn" not in html
+    r = client.get("/static/htmx.min.js")
+    assert r.status_code == 200
+    assert 'version:"2.0.' in r.text

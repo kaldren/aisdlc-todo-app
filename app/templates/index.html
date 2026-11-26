@@ -5,12 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Todo</title>
   <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/htmx.min.js" defer></script>
 </head>
 <body>
   <main>
     <h1>Todo</h1>
     {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
-    <form class="add" method="post" action="/tasks">
+    <form class="add" method="post" action="/tasks"
+          hx-post="/tasks" hx-target="#task-list" hx-swap="outerHTML"
+          hx-on::after-request="if (event.detail.successful) this.reset()">
       <input type="text" name="text" required maxlength="200"
              placeholder="New task" aria-label="New task" autocomplete="off">
       <button type="submit">Add</button>

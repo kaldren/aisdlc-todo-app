@@ -3,18 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="htmx-config" content='{"responseHandling": [{"code": "204", "swap": false},
+    {"code": "[23]..", "swap": true}, {"code": "404|422", "swap": true, "error": true},
+    {"code": "[45]..", "swap": false, "error": true}]}'>
   <title>Todo</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/htmx.min.js" defer></script>
 </head>
 <body>
-  <main>
+  <main hx-on::after-request="if (event.detail.successful) htmx.find('#form-error').textContent = ''">
     <h1>Todo</h1>
-    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    {% include "_error.html" %}
     <form class="add" method="post" action="/tasks"
           hx-post="/tasks" hx-target="#task-list" hx-swap="outerHTML"
           hx-on::after-request="if (event.detail.successful) this.reset()">
-      <input type="text" name="text" required maxlength="200"
+      <input type="text" name="text" required maxlength="200" pattern=".*\S.*"
+             title="Task text is required"
              placeholder="New task" aria-label="New task" autocomplete="off">
       <button type="submit">Add</button>
     </form>

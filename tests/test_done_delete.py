@@ -72,8 +72,15 @@ def test_htmx_vs_redirect(client):
 def test_unknown_id_404(client):
     add("A")
     for path in ("/tasks/999/done", "/tasks/999/delete"):
-        assert client.post(path, follow_redirects=False).status_code == 404
-        assert client.post(path, headers=HX).status_code == 404
+        r = client.post(path, follow_redirects=False)
+        assert r.status_code == 404
+        assert r.headers["content-type"].startswith("text/html")
+        assert '<p id="form-error" class="error" role="alert">Task not found</p>' in r.text
+        assert ">A</span>" in r.text  # full page with the current list
+        r = client.post(path, headers=HX)
+        assert r.status_code == 404
+        assert r.text.strip() == '<p id="form-error" class="error" role="alert">Task not found</p>'
+        assert r.headers["HX-Retarget"] == "#form-error"
     assert rows() == [(1, "A", 0)]
 
 

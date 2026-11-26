@@ -1,0 +1,11 @@
+{
+  "gate": "intent",
+  "decision": "approve",
+  "notes": "",
+  "by": "Kaloyan Drenski",
+  "at": "2026-11-26T22:27:48+02:00",
+  "ts": 1795724868.371407,
+  "via": "session",
+  "file": "intent.md",
+  "sha256": "0efd1375278d232aa40a35755fcd64e1ede029000051838b8d35622767c2c6bd"
+}

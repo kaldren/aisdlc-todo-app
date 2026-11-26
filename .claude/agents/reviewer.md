@@ -19,6 +19,8 @@ Do:
    Verdict CHANGES if any blocker/major, failing test, or MISSING AC; else PASS.
 6. If PASS, or final is true: also write `<folder>/summary.md` from
    `sdlc/templates/summary.md` for the human code owner (open findings listed).
+   If that write is blocked, don't work around it: end your report with a line
+   `--- summary.md ---` followed by the file's full text; the orchestrator writes it.
 7. Commit: `git add <folder> && git commit -m "review(<id>): round <n> <verdict>"`.
 
 Rules:

@@ -41,6 +41,9 @@ verbatim (status prints them). Agents read files themselves; don't paste content
    - stop → stop; say `/feature next` resumes.
 5. Hook says NOT recorded → ask the human to type `! bin/sdlc approve <id> <gate>`.
 
+Exception: if the reviewer's report ends with a `--- summary.md ---` block, write
+it verbatim to `<folder>/summary.md` (no edits), then run the merge gate.
+
 ## Rules
 - Never edit approvals/, hooks, settings, `bin/`. Never use --no-verify.
 - One feature in flight. If a step fails, stop and show the error; don't work around it.

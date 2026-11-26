@@ -1,0 +1,19 @@
+<ul id="task-list">
+{% for task in tasks %}
+  <li{% if task.done %} class="done"{% endif %}>
+    <span class="text">{{ task.text }}</span>
+    {% if not task.done %}
+    <form method="post" action="/tasks/{{ task.id }}/done"
+          hx-post="/tasks/{{ task.id }}/done" hx-target="#task-list" hx-swap="outerHTML">
+      <button type="submit">Done</button>
+    </form>
+    {% endif %}
+    <form method="post" action="/tasks/{{ task.id }}/delete"
+          hx-post="/tasks/{{ task.id }}/delete" hx-target="#task-list" hx-swap="outerHTML">
+      <button type="submit">Delete</button>
+    </form>
+  </li>
+{% else %}
+  <li class="empty">No tasks yet</li>
+{% endfor %}
+</ul>

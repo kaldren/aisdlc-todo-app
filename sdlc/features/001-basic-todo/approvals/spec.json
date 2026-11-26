@@ -1,0 +1,11 @@
+{
+  "gate": "spec",
+  "decision": "approve",
+  "notes": "",
+  "by": "Kaloyan Drenski",
+  "at": "2026-11-26T22:34:16+02:00",
+  "ts": 1795725256.213026,
+  "via": "session",
+  "file": "spec.md",
+  "sha256": "444fbfbe609081359c4fdba029001a9562f180ea92f842640f94670d18018a66"
+}

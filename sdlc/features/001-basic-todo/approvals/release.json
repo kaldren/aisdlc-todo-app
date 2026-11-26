@@ -1,0 +1,12 @@
+{
+  "gate": "release",
+  "decision": "approve",
+  "notes": "",
+  "by": "Kaloyan Drenski",
+  "at": "2026-11-26T23:26:40+02:00",
+  "ts": 1795728400.3430688,
+  "via": "session",
+  "file": "release.md",
+  "sha256": "6b7a1e4d49d55c5cc1e4a56742d6332eacd4ba6688e65e3c66936e09ff6c2d5d",
+  "commit": "9f159c0d3a67f3dc4afc39b3c9e88fd3057851a3"
+}

@@ -12,12 +12,14 @@ A user can add a task with a short text, see all their tasks in one list,
 mark a task as done, and delete a task.
 Done tasks are visibly different from open ones.
 The list still shows the same tasks after a page reload or app restart.
+All of this works as well on a phone, by touch, as on a desktop.
 
 ## Success signals (≤ 5 lines)
 - A newly added task appears in the list right away.
 - Marking a task done changes how it shows in the list.
 - A deleted task is gone from the list and does not come back.
 - Tasks are still there after the app restarts.
+- On a phone-sized screen, a user can read, add, mark done and delete tasks by touch, without zooming or sideways scrolling.
 
 ## Out of scope (≤ 5 lines)
 - Editing a task's text, or un-marking a done task.
